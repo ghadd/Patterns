@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'class ContextFactory:
+'    """Factory + Prototype"""
+'
+'    __prototypes = {
+'        "userboard": UserBoard()
+'    }
+'
+'    def create_context(self, what) -> Context:
+'        return self.__prototypes[what].clone()
+
+
+class ContextFactory {
+    -__prototypes : const Context[]
+
+    +create_context(what : string) : Context
+}
+
+'class Context(object):
+'    def __init__(self, user_id=None, object_id=None, payload: dict = None, strategy: Strategy = None):
+'        self.user_id = user_id
+'        self.object_id = object_id
+'        self._payload = payload or {}
+'        self._strategy = strategy
+'
+'
+'    def exec(self):
+'        assert self._strategy is not None
+'        self._strategy.perform_query(
+'            self.user_id, self.object_id, self._payload)
+'
+'    @abstractmethod
+'    def clone(self):
+'        raise NotImplementedError
+
+interface Context {
+    -user_id : int
+    -object_id : int
+    #payload : Dictionary
+    #strategy : Strategy
+
+    +exec()
+    +{abstract} clone() : Context
+}
+
+'class UserBoard(Modellable, Context):
+'    def __init__(self):
+'        super().__init__()
+'
+'    def clone(self):
+'        return UserBoard()
+'
+'    def to_dict(self):
+'        return {
+'            "user_id": self.user_id,
+'            "board_id": self.object_id
+'        }
+
+class UserBoard
+interface Modellable {
+    +to_dict() : Dictionary
+}
+
+Modellable <|.. UserBoard
+Context <|.. UserBoard
+ContextFactory *-- Context
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'class ModelBuilder(Builder):
+'    """Builder"""
+'
+'    def create_model(self, object_classname, model_classname=None, **kwargs):
+'        if model_classname is None:
+'            model_classname = object_classname + "Model"
+'
+'        object_class = eval(object_classname)
+'        model_class = eval(model_classname)
+'
+'        obj = object_class(**kwargs)
+'        return model_class.create(**obj.to_dict())
+
+interface Builder {
+    {abstract}reset()
+    {abstract}setup_attributes()
+}
+
+class ModelBuilder {
+    +create_model(obect_classname : string, model_classname : string, params : Dictionary) : Model
+}
+
+ModelBuilder <|.. Builder
+
+class App {
+    +objects : Object[]
+}
+
+abstract class Client
+
+App <-- Client
+Builder <-- App
+ModelBuilder <.. Client
+
+@enduml

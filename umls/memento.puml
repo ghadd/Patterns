@@ -1,0 +1,140 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface BaseModel
+
+class BaseModel.Meta {
+    -database: peewee.SQLiteDatabase
+}
+
+class peewee.SQLiteDatabase
+
+BaseModel.Meta *-- peewee.SQLiteDatabase
+
+BaseModel +-- BaseModel.Meta
+
+
+'class BoardModel(BaseModel):
+'    tasks = JSONField()
+'    repo = CharField(null=True)
+'
+'    def add_task_from(self, user, task):
+'        if user.username == "cool_username":
+'            self.tasks.append(task)
+'            self.save()
+'        else:
+'            raise ValueError("Your username is not cool enough.")
+'
+'    def save_snapshot(self) -> Snapshot:
+'        """
+'        Saves the current state inside a memento.
+'        """
+'
+'        return TasksSnapshot(json.dumps(self.tasks))
+'
+'    def restore_snapshot(self, memento: Snapshot) -> None:
+'        """
+'        Restores the Originator's state from a memento object.
+'        """
+'
+'        self.tasks = json.loads(memento.get_state())
+'        self.save()
+'        print(f"Originator: My state has changed to: {self.tasks}")
+
+class BoardModel {
+    -tasks : peewee.JSONField
+    -repo : peewee.CharField
+
+    +add_task_from(user: UserModel, task: Task)
+    +save_snapshot() : Snapshot
+    +restore_snapshot(memento : Snapshot) : void
+}
+
+BaseModel <|.. BoardModel
+
+'class Snapshot(ABC):
+'    @abstractmethod
+'    def get_name(self) -> str:
+'        raise NotImplementedError
+'
+'    @abstractmethod
+'    def get_date(self) -> str:
+'        raise NotImplementedError
+
+interface Snapshot {
+    +{abstract}get_name() : string
+    +{abstract}get_date() : string
+}
+
+'class TasksSnapshot(Snapshot):
+'    def __init__(self, state: str) -> None:
+'        self._state = state
+'        self._date = str(datetime.now())[:19]
+'
+'    def get_state(self) -> str:
+'        """
+'        The Originator uses this method when restoring its state.
+'        """
+'        return self._state
+'
+'    def get_name(self) -> str:
+'        """
+'        The rest of the methods are used by the Caretaker to display metadata.
+'        """
+'
+'        return f"{self._date} / ({self._state[0:9]}...)"
+'
+'    def get_date(self) -> str:
+'        return self._date
+
+class TasksSnapshot {
+    #state : string {JSON serialized tasks}
+    #date : string
+}
+
+Snapshot <|.. TasksSnapshot
+
+'class Caretaker():
+'    """
+'    The Caretaker doesn't depend on the Concrete Memento class. Therefore, it
+'    doesn't have access to the originator's state, stored inside the memento. It
+'    works with all mementos via the base Memento interface.
+'    """
+'
+'    def __init__(self, originator: BoardModel) -> None:
+'        self._mementos = []
+'        self._originator = originator
+'
+'    def backup(self) -> None:
+'        print("\nCaretaker: Saving Originator's state...")
+'        self._mementos.append(self._originator.save_snapshot())
+'
+'    def undo(self) -> None:
+'        if not len(self._mementos):
+'            return
+'
+'        memento = self._mementos.pop()
+'        print(f"Caretaker: Restoring state to: {memento.get_name()}")
+'        try:
+'            self._originator.restore_snapshot(memento)
+'        except Exception:
+'            self.undo()
+'
+'    def show_history(self) -> None:
+'        print("Caretaker: Here's the list of mementos:")
+'        for memento in self._mementos:
+'            print(memento.get_name())
+
+class Caretaker {
+    #mementos : Snapshot[]
+    #originator : BoardModel
+
+    +backup() : void
+    +undo() : void
+    +show_history() : void
+}
+
+TasksSnapshot <.. BoardModel
+Caretaker o--> BoardModel
+
+@enduml

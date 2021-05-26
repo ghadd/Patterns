@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+'class Strategy(ABC):
+'    @abstractmethod
+'    def perform_query(self, user_id, object_id, payload):
+'        raise NotImplementedError
+
+interface Strategy {
+    +{abstract} perform_query(user_id : int, object_id : int, payload : Dictionary)
+}
+
+'class AddTaskStrategy(Strategy):
+'    def perform_query(self, user_id, object_id, payload):
+'        user = UserModel.get(user_id)
+'        board = BoardModel.get(object_id)
+'
+'        try:
+'            board.add_task_from(user, payload['task'])
+'            print('[PERMITTED]', 'New task: ', payload['task'])
+'        except ValueError as e:
+'            print("[NOT PERMITTED]", e)
+
+class AddTaskStrategy
+
+Strategy <|.. AddTaskStrategy
+
+interface Context {
+    -user_id : int
+    -object_id : int
+    #payload : Dictionary
+    #strategy : Strategy
+
+    +exec()
+    +{abstract} clone() : Context
+}
+
+Context o-> Strategy
+
+abstract class Client
+
+Client --> Context
+Client ..> AddTaskStrategy
+
+@enduml

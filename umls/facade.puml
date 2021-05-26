@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'class Board(Modellable):
+'    """"Facade"""
+'
+'    def __init__(self, **kwargs):
+'        tasks = kwargs.get('tasks') or []
+'        repo = kwargs.get('repo')
+'
+'        assert type(tasks) == list
+'
+'        self.__tasks = tasks
+'        self.__repo = repo
+'
+'    def add_task(self, task):
+'        self.__tasks.append(task)
+'
+'    def to_dict(self):
+'        if type(self) != Board:
+'            self = self.decorated_board
+'
+'        return {
+'            "tasks": self.__tasks,
+'            "repo": self.__repo,
+'        }
+
+
+interface Modellable {
+    +{abstract}to_dict() : Dictionary
+}
+
+class Board {
+    +Board(params: Dictionary)
+    +add_task(task: Task)
+
+    -tasks : Task[]
+    -repo : Repository
+}
+
+class Repository {
+    -link : string
+}
+
+class Task {
+    -body : string
+    ...
+}
+
+Modellable <|-- Board
+Repository <.. Board
+Task <.. Board
+
+@enduml

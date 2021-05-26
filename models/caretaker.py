@@ -1,7 +1,7 @@
 from ._model_board import BoardModel
 
 
-class Caretaker():
+class Caretaker:
     """
     The Caretaker doesn't depend on the Concrete Memento class. Therefore, it
     doesn't have access to the originator's state, stored inside the memento. It

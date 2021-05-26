@@ -87,14 +87,26 @@ def test_memento():
     print(board.tasks)
 
 
+def test_iterator():
+    dbm = DBManager.get_instance()
+    dbm.create_schema()
+
+    mb = ModelBuilder()
+    board = mb.create_model('Board', 'BoardModel', tasks=['initial_task1', 'initial_task2', 'initial_task3'])
+
+    print("Iterating board")
+    for task in board:
+        print(task)
+
+
 if __name__ == "__main__":
-    # test_decorator()
-    # test_singleton_and_proxy_and_builder()
-    # test_factory()
+    test_decorator()
+    test_singleton_and_proxy_and_builder()
+    test_factory()
 
-    # test_strategy('anon')
-    # test_strategy('cool_username')
+    test_strategy('anon')
+    test_strategy('cool_username')
 
-    # test_memento()
+    test_memento()
 
-    pass
+    test_iterator()

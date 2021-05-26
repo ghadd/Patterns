@@ -32,3 +32,6 @@ class BoardModel(BaseModel):
         self.tasks = json.loads(memento.get_state())
         self.save()
         print(f"Originator: My state has changed to: {self.tasks}")
+
+    def __iter__(self):
+        return (task for task in self.tasks)

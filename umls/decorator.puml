@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'class Board(Modellable):
+'    """"Facade"""
+'
+'    def __init__(self, **kwargs):
+'        tasks = kwargs.get('tasks') or []
+'        repo = kwargs.get('repo')
+'
+'        assert type(tasks) == list
+'
+'        self.__tasks = tasks
+'        self.__repo = repo
+'
+'    def add_task(self, task):
+'        self.__tasks.append(task)
+'
+'    def to_dict(self):
+'        if type(self) != Board:
+'            self = self.decorated_board
+'
+'        return {
+'            "tasks": self.__tasks,
+'            "repo": self.__repo,
+'        }
+
+interface Modellable {
+    +{abstract}to_dict() : Dictionary
+}
+
+class Board {
+    +Board(params: Dictionary)
+    +add_task(task: Task)
+
+    -tasks : Task[]
+    -repo : Repository
+}
+
+'class BoardMeta(ABC, Board):
+'    def __init__(self, decorated_board):
+'        self.decorated_board = decorated_board
+'
+
+abstract class BoardMeta {
+    +BoardMeta(decorated_board : Board)
+    -decorated_board : Board
+}
+
+'class BackgroundMeta(BoardMeta):
+'    def __init__(self, decorated_board, background):
+'        super().__init__(decorated_board)
+'
+'        bg_url = background
+'        self.decorated_board.background = bg_url
+'
+'    def to_dict(self):
+'        return super().to_dict() | {
+'            "background": self.decorated_board.background
+'        }
+
+class BackgroundMeta {
+    +BackgroundMeta(decorated_board : Board, background : string)
+    +to_dict() : Dictionary
+}
+
+Modellable <--o BoardMeta
+Modellable <|.. BoardMeta
+Modellable <|.. Board
+BoardMeta <|-- BackgroundMeta
+
+
+@enduml
